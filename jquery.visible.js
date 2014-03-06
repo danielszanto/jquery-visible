@@ -29,10 +29,12 @@
             var rec = t.getBoundingClientRect(),
                 tViz = rec.top    >= 0 && rec.top    <  vpHeight,
                 bViz = rec.bottom >  0 && rec.bottom <= vpHeight,
+                mVis = rec.top    <  0 && rec.bottom >  vpHeight,   
                 lViz = rec.left   >= 0 && rec.left   <  vpWidth,
                 rViz = rec.right  >  0 && rec.right  <= vpWidth,
-                vVisible   = partial ? tViz || bViz : tViz && bViz,
-                hVisible   = partial ? lViz || lViz : lViz && rViz;
+                hmVis= rec.left   <  0 && rec.right  >  vpWidth,
+                vVisible   = partial ? tViz || bViz || mVis : tViz && bViz,
+                hVisible   = partial ? lViz || lViz ||hmVis : lViz && rViz;
 
             if(direction === 'both')
                 return clientSize && vVisible && hVisible;
@@ -57,11 +59,11 @@
                 compareRight    = partial === true ? _left : _right;
 
             if(direction === 'both')
-                return !!clientSize && ((compareBottom <= viewBottom) && (compareTop >= viewTop)) && ((compareRight <= viewRight) && (compareLeft >= viewLeft));
+                return !!clientSize && (((compareBottom <= viewBottom) && (compareTop >= viewTop)) || (partial === true && compareTop > ViewBottom && CompareBottom < viewTop)) && (((compareRight <= viewRight) && (compareLeft >= viewLeft)) || (partial === true && compareLeft > ViewRight && CompareRight < viewLeft));
             else if(direction === 'vertical')
-                return !!clientSize && ((compareBottom <= viewBottom) && (compareTop >= viewTop));
+                return !!clientSize && (((compareBottom <= viewBottom) && (compareTop >= viewTop)) || (partial === true && compareTop > ViewBottom && CompareBottom < viewTop));
             else if(direction === 'horizontal')
-                return !!clientSize && ((compareRight <= viewRight) && (compareLeft >= viewLeft));
+                return !!clientSize && (((compareRight <= viewRight) && (compareLeft >= viewLeft)) || (partial === true && compareLeft > ViewRight && CompareRight < viewLeft));
         }
     };
 
